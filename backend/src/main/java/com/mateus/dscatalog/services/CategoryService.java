@@ -1,6 +1,7 @@
 package com.mateus.dscatalog.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.mateus.dscatalog.dto.CategoryDTO;
 import com.mateus.dscatalog.entities.Category;
 import com.mateus.dscatalog.repositories.CategoryRepository;
+import com.mateus.dscatalog.services.exceptions.EntityNotFoundException;
 
 @Service
 public class CategoryService {
@@ -24,4 +26,13 @@ public class CategoryService {
 		return list.stream().map(x -> new CategoryDTO(x)).collect(Collectors.toList());
 
 	}
+	
+	@Transactional(readOnly = true)
+	public CategoryDTO findById(Long id) {
+		Optional<Category> obj = repository.findById(id);
+		Category entity = obj.orElseThrow(() -> new EntityNotFoundException("Entidade Não existente"));
+		return new CategoryDTO(entity);
+	}
+	
+	
 }
